@@ -1,26 +1,44 @@
 # Desc: base config
-PLATFORM = "xhs"
-KEYWORDS = "python,golang"
-LOGIN_TYPE = "qrcode"  # qrcode or phone or cookie
+PLATFORM = "xhs" 
+# KEYWORDS = "python,golang"
+# 1026
+# 汽车,单车,摩托车,滑板,电脑,电视,手机, 身份证,银行卡,户口本,结婚证,名片,出生证明,护照,警官证,执行公务证,学生证,毕业证,签证,篮球,足球,排球,羽毛球,乒乓球,台球,网球,高尔夫球,
+# 冰球,沙滩排球,棒球,垒球,保龄球,虎,鹿,猴,马,狗,猫,狐,豹子,狮子,考拉,
+# 沙滩排球,棒球,垒球,保龄球,虎,鹿,猴,马,狗,猫,狐,豹子,狮子,考拉,犀牛,长颈鹿,熊猫,海豚,北极熊,袋鼠,河马,海豹,鲸鱼,腾讯,阿里,百度,字节跳动,拼多多,美团,
+# 蚂蚁,蔚来,网易,理想,小鹏,特斯拉,比亚迪,旅游,
+
+# 1030 
+# 旅行,睡觉,吃饭,散步,跑步,游泳,合影,拍照,录像,学习, 工作, 购物, 滑雪, 唱歌, 跳舞,健身, 烹饪, 画画, 阅读, 写作, 看电影, 打球, 钓鱼, 骑自行车, 爬山, 溜冰, 打游戏, 聚会, 听音乐, 喝茶,咖啡, 野餐, 露营, 瑜伽, 美容,化妆, 太极, 种花,园艺, 手工制作, 玩乐器, 下棋, 驾驶, 跳伞, 潜水, 冥想, 球类运动
+# 1101
+# 图书馆,电影院,咖啡馆,公园,博物馆,餐厅,购物中心,古镇,美术馆,动物园,植物园,体育场,音乐厅,游乐园,水族馆,茶馆,网吧,寺庙,大学,歌剧院,桥梁,文化村
+# 补充
+# 植物园,游泳,跑步,网易,腾讯,排球,冰球,唱歌,吃饭,保龄球,桥梁,化妆,玩乐器,阅读,鹿,看电影,健身,沙滩排球,合影,毕业证,滑雪,公园,游乐园,瑜伽,豹子,
+# 高尔夫球,钓鱼,狮子,购物中心,听音乐,出生证明,警官证,手机,垒球,电脑,潜水,咖啡,野餐,美团,蚂蚁,狗,虎,文化村,结婚证,单车,写作,摩托车,网吧,睡觉,打球,名片,古镇,餐厅
+# 拼多多,长颈鹿,签证,字节跳动,露营,鲸鱼,棒球,犀牛,海豹,拍照,咖啡馆,网球,画画,比亚迪,购物,滑板,乒乓球,散步,跳舞,篮球
+# 骑自行车, 唱歌, 玩乐器, 阅读, 看电影, 滑雪, 瑜伽, 钓鱼, 听音乐, 野餐, 潜水, 写作, 打球, 烹饪, 手工制作, 太极, 喝茶, 美容, 下棋, 聚会, 种花, 冥想, 
+# 跳伞, 驾驶, 溜冰, 爬山, 打游戏, 身份证, 球类运动, 工作，露营, 画画, 购物, 跳舞
+KEYWORDS="二维码,驾驶证,天空,沙漠,雪山,自拍,月亮,日出日落,生日,名片,文本,护照,羽毛球场,星空,高尔夫场,寿司,文档,彩虹,生日蛋糕,城市风景,网球场,夜景,足球场,婴儿,体育运动,山,树,雪景,花,海,草地,票据收据,户口本,老人,儿童,烟花,眼镜,飞机,篮球场,笑,雨天,游泳池,火锅,行驶证,证件"
+LOGIN_TYPE = "qrcode"  # qrcode or phone or cookie 
 COOKIES = ""  # login by cookie, if login_type is cookie, you must set this value
 
-# enable ip proxy
+
+# enable ip proxy 启用ip代理
 ENABLE_IP_PROXY = False
 
-# retry_interval
+# retry_interval 重试间隔
 RETRY_INTERVAL = 60 * 30  # 30 minutes
 
-# playwright headless
+# playwright headless 
 HEADLESS = True
 
-# save login state
+# save login state 保存登录状态
 SAVE_LOGIN_STATE = True
 
-# save user data dir
+# save user data dir 保存用户数据目录
 USER_DATA_DIR = "%s_user_data_dir"  # %s will be replaced by platform name
 
-# crawler max notes count
-CRAWLER_MAX_NOTES_COUNT = 20
+# crawler max notes count 爬虫最大笔记数
+CRAWLER_MAX_NOTES_COUNT = 200
 
-# max concurrency num
-MAX_CONCURRENCY_NUM = 10
+# max concurrency num 最大并发数
+MAX_CONCURRENCY_NUM = 20

@@ -65,9 +65,11 @@ async def update_xhs_note(note_item: Dict):
     user_info = note_item.get("user", {})
     interact_info = note_item.get("interact_info", {})
     image_list: List[Dict] = note_item.get("image_list", [])
+    tag_list: List[Dict] = note_item.get("tag_list", [])
 
     local_db_item = {
         "note_id": note_item.get("note_id"),
+        'tags': ','.join([tag.get('name', '') for tag in tag_list]),
         "type": note_item.get("type"),
         "title": note_item.get("title") or note_item.get("desc", "")[:255],
         "desc": note_item.get("desc", ""),
@@ -84,7 +86,7 @@ async def update_xhs_note(note_item: Dict):
         "image_list": ','.join([img.get('url', '') for img in image_list]),
         "last_modify_ts": utils.get_current_timestamp(),
     }
-    print("xhs note:", local_db_item)
+    # print("xhs note:", local_db_item)
     if config.IS_SAVED_DATABASED:
         if not await XHSNote.filter(note_id=note_id).first():
             local_db_item["add_ts"] = utils.get_current_timestamp()
@@ -123,7 +125,7 @@ async def update_xhs_note_comment(note_id: str, comment_item: Dict):
         "sub_comment_count": comment_item.get("sub_comment_count"),
         "last_modify_ts": utils.get_current_timestamp(),
     }
-    print("xhs note comment:", local_db_item)
+    # print("xhs note comment:", local_db_item)
     if config.IS_SAVED_DATABASED:
         if not await XHSNoteComment.filter(comment_id=comment_id).first():
             local_db_item["add_ts"] = utils.get_current_timestamp()

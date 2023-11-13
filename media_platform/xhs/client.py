@@ -129,11 +129,40 @@ class XHSClient:
         :param note_id: note_id you want to fetch
         :return: {"time":1679019883000,"user":{"nickname":"nickname","avatar":"avatar","user_id":"user_id"},"image_list":[{"url":"https://sns-img-qc.xhscdn.com/c8e505ca-4e5f-44be-fe1c-ca0205a38bad","trace_id":"1000g00826s57r6cfu0005ossb1e9gk8c65d0c80","file_id":"c8e505ca-4e5f-44be-fe1c-ca0205a38bad","height":1920,"width":1440}],"tag_list":[{"id":"5be78cdfdb601f000100d0bc","name":"jk","type":"topic"}],"desc":"裙裙","interact_info":{"followed":false,"liked":false,"liked_count":"1732","collected":false,"collected_count":"453","comment_count":"30","share_count":"41"},"at_user_list":[],"last_update_time":1679019884000,"note_id":"6413cf6b00000000270115b5","type":"normal","title":"title"}
         """
+
         data = {"source_note_id": note_id}
         uri = "/api/sns/web/v1/feed"
-        res = await self.post(uri, data)
-        res_dict: Dict = res["items"][0]["note_card"]
-        return res_dict
+
+        # res = await self.post(uri, data)
+        # res_dict: Dict = res["items"][0]["note_card"]
+
+        # 获取无水印图片
+        import requests
+        headers = await self._pre_headers(uri, data)
+        url = f'https://www.xiaohongshu.com/explore/{note_id}'
+        r = requests.get(url, headers=headers)
+        html = r.text
+
+        beginPos = html.find('noteDetailMap') + len('noteDetailMap') + 2
+        endPos = html.find(',"serverRequestInfo"')
+        noteDetailMap = json.loads(html[beginPos: endPos])[note_id]['note']
+
+        for item in noteDetailMap['imageList']:
+            for url_dict in item['infoList']:
+                if url_dict['imageScene'] == 'CRD_WM_JPG':
+                    item['url'] = url_dict['url']
+        noteDetailMap['note_id'] = noteDetailMap.pop('noteId')
+        noteDetailMap['last_update_time'] = noteDetailMap.pop('lastUpdateTime')
+        noteDetailMap['ip_location'] = noteDetailMap.get('ipLocation', '')
+        noteDetailMap['image_list'] = noteDetailMap.pop('imageList')
+        interact_info = noteDetailMap.get("interactInfo", {})
+        interact_info['collected_count'] = interact_info.get('collectedCount', 0)
+        interact_info['comment_count'] = interact_info.get('commentCount',0)
+        interact_info['liked_count'] = interact_info.get('likedCount',0)
+        interact_info['share_count'] = interact_info.get('shareCount',0)
+        noteDetailMap['interact_info'] = interact_info
+
+        return noteDetailMap
 
     async def get_note_comments(self, note_id: str, cursor: str = "") -> Dict:
         """get note comments
