@@ -1,6 +1,7 @@
 import asyncio
 import os
 import random
+from collections import defaultdict
 from asyncio import Task
 from typing import Dict, List, Optional, Tuple
 
@@ -81,11 +82,13 @@ class XiaoHongShuCrawler(AbstractCrawler):
         """Search for notes and retrieve their comment information."""
         utils.logger.info("Begin search xiaohongshu keywords")
         xhs_limit_count = 20  # xhs limit page fixed value
-        for keyword in config.KEYWORDS.split(","):
+        all_keywords = config.KEYWORDS.split(",")
+        for idx, keyword in enumerate(all_keywords):
             # set keyword to context var
             request_keyword_var.set(keyword)
-            utils.logger.info(f"Current search keyword: {keyword}")
+            utils.logger.info(f"Current search keyword: {keyword}, {idx}/{len(all_keywords)}")
             page = 1
+
             while page * xhs_limit_count <= config.CRAWLER_MAX_NOTES_COUNT:
                 note_id_list: List[str] = []
                 notes_res = await self.xhs_client.get_note_by_keyword(
@@ -93,19 +96,28 @@ class XiaoHongShuCrawler(AbstractCrawler):
                     page=page,
                 )
                 semaphore = asyncio.Semaphore(config.MAX_CONCURRENCY_NUM)
-                task_list = [
-                    self.get_note_detail(post_item.get("id"), semaphore)
-                    for post_item in notes_res.get("items", {})
-                    if post_item.get('model_type') not in ('rec_query', 'hot_query')
-                ]
+                task_list = []
+                new_notes_res = defaultdict(dict)
+                # list to dict
+                for post_item in notes_res.get("items", {}):
+                    if post_item.get('model_type') in ('rec_query', 'hot_query'):
+                        continue
+                    for img_card in post_item['note_card']['image_list']:
+                        if 'trace_id' in img_card and img_card['trace_id']:
+                            img_card['url'] = img_card['url'].split('com/')[0] + 'com/' + img_card['trace_id']
+                    new_notes_res[post_item.get("id")] = post_item['note_card']
+                    task_list.append(self.get_note_detail(post_item.get("id"), semaphore))
+
                 note_details = await asyncio.gather(*task_list)
                 for note_detail in note_details:
                     if note_detail is not None:
+                        if note_detail['note_id'] in new_notes_res:
+                            note_detail['image_list'] = new_notes_res[note_detail['note_id']]['image_list']
                         await xhs_model.update_xhs_note(note_detail)
                         note_id_list.append(note_detail.get("note_id"))
                 page += 1
-                utils.logger.info(f"Note details: {note_details}")
-                await self.batch_get_note_comments(note_id_list)
+                # utils.logger.info(f"Note details: {note_details}")
+                # await self.batch_get_note_comments(note_id_list)
 
     async def get_note_detail(self, note_id: str, semaphore: asyncio.Semaphore) -> Optional[Dict]:
         """Get note detail"""
