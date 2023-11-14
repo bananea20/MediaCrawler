@@ -1,0 +1,6 @@
+2023/11/13-09:50:58.454 8ac Reusing MANIFEST D:\github\MediaCrawler\browser_data\xhs_user_data_dir\Default\Local Storage\leveldb/MANIFEST-000001
+2023/11/13-09:50:58.459 8ac Recovering log #54
+2023/11/13-09:50:58.466 8ac Reusing old log D:\github\MediaCrawler\browser_data\xhs_user_data_dir\Default\Local Storage\leveldb/000054.log 
+2023/11/13-10:02:02.582 bb30 Level-0 table #59: started
+2023/11/13-10:02:02.587 bb30 Level-0 table #59: 12428 bytes OK
+2023/11/13-10:02:02.591 bb30 Delete type=0 #54
